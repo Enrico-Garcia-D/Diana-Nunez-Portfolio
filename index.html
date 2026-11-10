@@ -1,54 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index.css">
-    <title>Portfolio</title>
-</head>
-<body>
-    <div class="main-container">
-        <!--Heading Section-------------------------------------->      
-        <div c="heading">
-            <a class="cv" href="NUÑEZ-DIANA-JOY-ZAPARITA.pdf" download="Diana_Nunez_CV">Download CV</a>
-        <a class="email" href="mailto:dianajoynunez748@gmail.com"><img class="icon" src="images/7089163_gmail_google_icon.png">Message Me</a>
-        </div>
-        <!--Center Objects--------------------------------------->    
-        <div class="center-text" >
-                <div class="popup-container" id="popup">
-                    <span class="close" onclick="closePopup()"</span>
-                    <p>I'm a passionate logo designer with a keen eye for detail and a love for creativity. 
-                            With years of experience in graphic design, I specialize in crafting unique and memorable 
-                            logos that effectively represent my clients' brands. Whether you're a startup looking to make 
-                            a bold statement or an established business in need of a brand refresh, I'm here to help bring 
-                            your vision to life. Let's work together to create a logo that truly stands out!</p>
-                </div>
-                <div class="hoveringtext">
-                    <h1 id="h1" class="text-clickable">Hi, I am Diana</h1>
-                    <button id="myworks">My Works</button>
-                </div>
-        <!--Projects Section------------------------------------->
-                <div id="projects">
-                    <div id="projects-content">
-                        <p class="projects-title">Designs</p>
-                        <img class="imgsample" src="images/p1.jpg" alt="Image 1">
-                        <img class="imgsample" src="images/p2.jpg" alt="Image 2">
-                        <img class="imgsample" src="images/p3.jpg" alt="Image 3">
-                        <img class="imgsample" src="images/p4.jpg" alt="Image 4">
-                        <img class="imgsample" src="images/p5.jpg" alt="Image 5">
-                        <img class="imgsample" src="images/p6.jpg" alt="Image 6">
-                        <button id="closeBtn">Return</button>
-                    </div>                    
-                </div>
-            </div>
-        <!--Contacts Section------------------------------------->
-            <div class="contact">
-                <a href="https://www.facebook.com/dianajoynunez?mibextid=opq0tG"><img class="icon" src="images/5296499_fb_facebook_facebook logo_icon.png">Facebook</a>
-                <a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.instagram.com%2Fdei.yana%3Figsh%3DMWcxM202eHMxNjZheQ%253D%253D%26fbclid%3DIwAR3cVNT4GCGDAfGY3iEvkqU_ZSNzRNZsPVkgdYxhgWAkbOeyYzrfUKMdlGo&h=AT1c8iQfKPFLAaRt7dvr-Um8UQ_JPh4aoa8PIX7jT0J5XIp8u5UeESG5mZIA1fsnrBkdcGt4lB9YeTQmNWgbNAs6yndHpA--mJKgar1qkmdeOEPJ76A0fuWdLrItHt7mkqmBNQ"><img class="icon" src="images/3225191_app_instagram_logo_media_popular_icon.png">Instagram</a>
-                <a href=""><img class="icon" src="images/3225190_app_linkedin_logo_media_popular_icon.png">linkedIn</a>
-                <a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.tiktok.com%2F%40die.yanaa%3F_t%3D8kAzXEY0LIo%26_r%3D1%26fbclid%3DIwAR24nbWnOG068R_vgk3ByQ-ygGQB9bvzwgDMzbPuKEhwbdKgzEyd3aehc2o&h=AT1c8iQfKPFLAaRt7dvr-Um8UQ_JPh4aoa8PIX7jT0J5XIp8u5UeESG5mZIA1fsnrBkdcGt4lB9YeTQmNWgbNAs6yndHpA--mJKgar1qkmdeOEPJ76A0fuWdLrItHt7mkqmBNQ"><img class="icon" src="images/7693325_tiktok_social media_logo_apps_icon.png">Tiktok</a>
-            </div>
-    </div>         
-        <script src="index.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diana Nuñez | Logo Designer</title>
+    <meta name="description" content="Portfolio of Diana Nuñez, a logo and graphic designer crafting unique, memorable brand identities." />
+    <meta property="og:title" content="Diana Nuñez | Logo Designer" />
+    <meta property="og:description" content="Unique, memorable logos that represent your brand." />
+    <meta name="theme-color" content="#f5efe6" />
+    <script>
+      // Apply the saved/system theme before first paint to avoid a flash.
+      try {
+        var t = localStorage.getItem("theme");
+        if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
