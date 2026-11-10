@@ -31,7 +31,19 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+    scrollbar-gutter: stable;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* No double-tap-zoom delay or grey flash on tap for interactive elements. */
+a, button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
 
 body {
     margin: 0;
@@ -82,7 +94,7 @@ em {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 12px 10px 22px;
+    padding: 8px 10px 8px 14px;
     background: color-mix(in srgb, var(--surface) 78%, transparent);
     -webkit-backdrop-filter: blur(14px) saturate(1.4);
     backdrop-filter: blur(14px) saturate(1.4);
@@ -91,6 +103,10 @@ em {
 }
 
 .nav-logo {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 8px;
     font-family: var(--display);
     font-weight: 600;
     font-size: 1.4rem;
@@ -99,22 +115,41 @@ em {
 }
 .nav-logo span { color: var(--accent); }
 
-.nav-links { display: flex; gap: 6px; }
+.nav.scrolled { box-shadow: 0 10px 30px -14px rgba(40, 20, 10, 0.35); }
+
+.nav-links { position: relative; display: flex; gap: 2px; }
+.nav-pill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    background: var(--bg-alt);
+    border-radius: 999px;
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), width 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.25s;
+    pointer-events: none;
+}
+.nav-links a[aria-current="true"] { color: var(--ink); }
 .nav-links a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     text-decoration: none;
     font-size: 0.95rem;
-    padding: 8px 16px;
+    padding: 0 16px;
     border-radius: 999px;
     color: var(--muted);
     transition: color 0.2s, background 0.2s;
 }
-.nav-links a:hover { color: var(--ink); background: var(--bg-alt); }
+.nav-links a:hover { color: var(--ink); }
 
 .nav-actions { display: flex; align-items: center; gap: 8px; }
 
 .icon-btn {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     display: grid;
     place-items: center;
     border: 1px solid var(--line);
@@ -135,46 +170,31 @@ em {
     font-weight: 500;
     font-size: 0.97rem;
     text-decoration: none;
-    padding: 12px 24px;
+    min-height: 44px;
+    padding: 0 24px;
     border-radius: 999px;
     border: 1px solid transparent;
     cursor: pointer;
     transition: transform 0.2s, background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 .btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(0.97); }
+.arrow, .mail span { display: inline-block; transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.btn:hover .arrow { transform: translateY(3px); }
+.mail:hover .arrow { transform: translate(4px, -4px); }
+.icon-btn:active { transform: scale(0.9); }
+.chip:active { transform: scale(0.96); }
+.tile button:active { transform: translateY(-3px) scale(0.99); }
 .btn-solid { background: var(--ink); color: var(--bg); }
 .btn-solid:hover { background: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow); }
 .btn-ghost { border-color: var(--line); background: transparent; color: var(--ink); }
 .btn-ghost:hover { background: var(--bg-alt); }
-.nav-cta { padding: 10px 20px; }
+.nav-cta { padding: 0 20px; }
 
 /* ---------- Layout ---------- */
 main > section, .contact { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
 .section { padding-block: clamp(64px, 10vw, 120px); }
 
-.eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0 0 18px;
-    font-size: 0.82rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-}
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #4caf6d;
-    box-shadow: 0 0 0 0 rgba(76, 175, 109, 0.6);
-    animation: pulse 2s infinite;
-}
-@keyframes pulse {
-    70% { box-shadow: 0 0 0 10px rgba(76, 175, 109, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(76, 175, 109, 0); }
-}
 
 .h2 {
     margin: 0;
@@ -193,6 +213,7 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
     gap: clamp(24px, 5vw, 72px);
     padding-block: clamp(48px, 8vw, 110px) clamp(48px, 7vw, 90px);
     min-height: min(86vh, 820px);
+    min-height: min(86svh, 820px); /* svh: stable on mobile browsers whose URL bar collapses */
 }
 
 .hero-title {
@@ -214,26 +235,47 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
 
 .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; }
 
+/* Sized by aspect-ratio (not a fixed height) so the stacked cards scale with their column at every width. */
 .hero-art {
     position: relative;
-    height: clamp(380px, 48vw, 560px);
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 1 / 1.02;
+    margin-inline: auto;
 }
 
-.card {
+/* Each layer is moved by pointer + scroll (variables set in useParallax); the card inside floats and rotates. */
+.layer {
     position: absolute;
+    --d: 1;
+    translate:
+        calc(var(--mx, 0) * var(--d) * -16px)
+        calc(var(--my, 0) * var(--d) * -12px + var(--sy, 0) * var(--d) * -70px);
+    will-change: translate;
+}
+.layer-1 { width: 52%; left: 4%; top: 6%; z-index: 2; --d: 1.2; }
+.layer-2 { width: 44%; right: 0; top: 0; --d: 0.6; }
+.layer-3 { width: 48%; right: 12%; bottom: 0; z-index: 3; --d: 1.7; }
+
+.card {
     margin: 0;
     background: var(--surface);
     border-radius: 14px;
     overflow: hidden;
     box-shadow: var(--shadow);
     border: 1px solid var(--line);
-    animation: float 7s ease-in-out infinite;
+    opacity: 0;
+    animation: card-in 1s both cubic-bezier(0.2, 0.7, 0.2, 1), float 7s ease-in-out 1s infinite;
 }
 .card img { width: 100%; height: auto; }
-.card-1 { width: 52%; left: 4%; top: 6%; transform: rotate(-6deg); z-index: 2; }
-.card-2 { width: 44%; right: 0; top: 0; transform: rotate(7deg); animation-delay: -2s; }
-.card-3 { width: 48%; right: 12%; bottom: 0; transform: rotate(-2deg); z-index: 3; animation-delay: -4s; }
+.layer-1 .card { rotate: -6deg; animation-delay: 0.15s, 1.15s; }
+.layer-2 .card { rotate: 7deg;  animation-delay: 0.3s, -1s; }
+.layer-3 .card { rotate: -2deg; animation-delay: 0.45s, -3s; }
 
+@keyframes card-in {
+    from { opacity: 0; transform: translateY(60px) scale(0.92); }
+    to   { opacity: 1; transform: none; }
+}
 @keyframes float {
     50% { translate: 0 -12px; }
 }
@@ -255,6 +297,11 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
     white-space: nowrap;
     animation: scroll 40s linear infinite;
 }
+.marquee {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
 .marquee-track i { color: var(--accent); font-style: normal; margin-left: 36px; }
 @keyframes scroll { to { transform: translateX(-50%); } }
 
@@ -262,9 +309,66 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
 .reveal {
     opacity: 0;
     transform: translateY(24px);
-    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition: opacity 0.8s ease var(--d, 0ms), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms);
 }
 .reveal.in { opacity: 1; transform: none; }
+
+/*
+ * Scroll typeface morph (see useScrollMorph). --m is 0 near the viewport centre and 1 near the edges.
+ * The primary heading fades out while an overlaid copy in another typeface fades in, so the
+ * letterforms appear to change as you scroll, and change back as you scroll back.
+ */
+.wi.stack { display: inline-grid; }
+.wi.stack > .f { grid-area: 1 / 1; white-space: nowrap; }
+
+/* One layer per typeface, all stacked; --o0..--o4 are set on the heading by useScrollMorph. */
+.f em { font-style: normal; }
+.f0 { opacity: var(--o0, 1); }
+.f1 { opacity: var(--o1, 0); font-family: "Space Grotesk Variable", var(--sans);      font-weight: 600; letter-spacing: -0.045em; }
+.f2 { opacity: var(--o2, 0); font-family: "Playfair Display Variable", Georgia, serif; font-weight: 600; letter-spacing: -0.03em; }
+.f3 { opacity: var(--o3, 0); font-family: "Syne Variable", var(--sans);               font-weight: 600; letter-spacing: -0.04em; }
+.f4 { opacity: var(--o4, 0); font-family: "Bricolage Grotesque Variable", var(--sans); font-weight: 700; letter-spacing: -0.04em; }
+.f0 em { font-style: italic; }
+.contact-title .wi.stack { justify-items: center; }
+
+/* Heading words rise out of a mask, one after another. */
+.w {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding: 0 0.08em 0.14em;
+    margin: 0 -0.08em -0.14em;
+}
+.wi {
+    display: inline-block;
+    transform: translateY(115%) rotate(4deg);
+    transform-origin: left bottom;
+    transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--base, 0ms) + var(--i) * 70ms);
+}
+.words.in .wi { transform: none; }
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* ---------- Scroll progress ---------- */
+.progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 3px;
+    z-index: 300;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    pointer-events: none;
+}
 
 /* ---------- Work ---------- */
 .section-head {
@@ -276,11 +380,14 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
     margin-bottom: 40px;
 }
 
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips-inner { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
     font: inherit;
     font-size: 0.92rem;
-    padding: 8px 18px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
     border-radius: 999px;
     border: 1px solid var(--line);
     background: transparent;
@@ -296,10 +403,6 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
 .tile {
     break-inside: avoid;
     margin-bottom: 24px;
-    animation: rise 0.6s both cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-@keyframes rise {
-    from { opacity: 0; transform: translateY(20px); }
 }
 
 .tile button {
@@ -377,7 +480,7 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
 }
 
 /* ---------- Contact ---------- */
-.contact { padding-bottom: 28px; }
+.contact { padding-bottom: max(20px, env(safe-area-inset-bottom)); }
 .contact-card {
     text-align: center;
     padding: clamp(40px, 8vw, 100px) clamp(20px, 4vw, 48px);
@@ -385,7 +488,6 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
     color: var(--bg);
     border-radius: calc(var(--radius) + 12px);
 }
-.contact-card .eyebrow { color: color-mix(in srgb, var(--bg) 60%, transparent); }
 .contact-title {
     margin: 0 auto 28px;
     max-width: 16ch;
@@ -399,15 +501,15 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
 .contact-card em { color: var(--accent); }
 :root[data-theme="dark"] .contact-card { background: var(--accent); color: var(--accent-ink); }
 :root[data-theme="dark"] .contact-card em { color: var(--surface); }
-:root[data-theme="dark"] .contact-card .eyebrow { color: color-mix(in srgb, var(--accent-ink) 65%, transparent); }
 
 .mail {
     display: inline-block;
     font-size: clamp(1.05rem, 3vw, 1.8rem);
     text-decoration: none;
     border-bottom: 2px solid currentColor;
-    padding-bottom: 4px;
-    word-break: break-all;
+    min-height: 44px;
+    padding-block: 10px 4px;
+    overflow-wrap: anywhere;
     transition: opacity 0.2s;
 }
 .mail:hover { opacity: 0.75; }
@@ -445,7 +547,7 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
     font-size: 0.88rem;
     color: var(--muted);
 }
-.footer a { text-decoration: none; }
+.footer a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 8px; margin-right: -8px; text-decoration: none; }
 .footer a:hover { color: var(--ink); }
 
 /* ---------- Lightbox ---------- */
@@ -455,11 +557,14 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
     z-index: 200;
     display: grid;
     place-items: center;
-    padding: 64px 72px;
+    padding: max(64px, env(safe-area-inset-top)) max(72px, env(safe-area-inset-right)) max(64px, env(safe-area-inset-bottom)) max(72px, env(safe-area-inset-left));
     background: rgba(14, 9, 6, 0.9);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    animation: fade 0.25s both;
+}
+/* Without View Transitions, fall back to a simple fade-in. */
+@supports not (view-transition-name: none) {
+    .lightbox { animation: fade 0.25s both; }
 }
 @keyframes fade { from { opacity: 0; } }
 
@@ -470,10 +575,15 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
     align-items: center;
     gap: 14px;
     max-height: 100%;
-    animation: pop 0.35s both cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-@keyframes pop { from { opacity: 0; transform: scale(0.96); } }
+/* Prev/next: the new design slides in from the side you navigated towards. */
+.lb-fig[data-dir="1"]  { animation: slide-from-right 0.4s both cubic-bezier(0.2, 0.7, 0.2, 1); }
+.lb-fig[data-dir="-1"] { animation: slide-from-left 0.4s both cubic-bezier(0.2, 0.7, 0.2, 1); }
+@keyframes slide-from-right { from { opacity: 0; transform: translateX(60px); } }
+@keyframes slide-from-left  { from { opacity: 0; transform: translateX(-60px); } }
+.lb-fig figcaption { animation: fade 0.5s 0.15s both; }
 .lb-fig img {
+    view-transition-name: design;
     max-width: 100%;
     max-height: calc(100vh - 170px);
     max-height: calc(100dvh - 170px);
@@ -513,21 +623,56 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; min-height: 0; }
-    .hero-art { order: -1; height: clamp(300px, 70vw, 420px); }
+    .hero-art { order: -1; max-width: min(460px, 100%); }
     .about { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
-    .nav-links { display: none; }
+    .nav { padding-left: 8px; }
+    .nav-links a { padding: 0 10px; font-size: 0.88rem; }
+    .nav-cta { display: none; }
+    .hero-art { max-width: min(380px, 100%); }
+    .section-head { align-items: flex-start; }
     .masonry { columns: 2 140px; column-gap: 14px; }
     .tile { margin-bottom: 14px; }
     .tile-meta { padding: 28px 12px 10px; font-size: 0.85rem; }
     .tile-arrow { display: none; }
-    .lightbox { padding: 64px 12px 24px; }
-    .lb-prev, .lb-next { top: auto; bottom: 18px; translate: none; }
+    .lightbox { padding: max(64px, env(safe-area-inset-top)) 12px max(88px, calc(env(safe-area-inset-bottom) + 72px)); }
+    .lb-prev, .lb-next { top: auto; bottom: max(18px, env(safe-area-inset-bottom)); translate: none; }
     .lb-prev { left: calc(50% - 60px); }
     .lb-next { right: calc(50% - 60px); }
-    .lb-fig img { max-height: calc(100dvh - 200px); }
+    .lb-fig img { max-height: calc(100dvh - 220px); }
+}
+
+/* Very narrow phones (320-360px): keep logo, three links and the theme toggle on one line. */
+@media (max-width: 380px) {
+    .nav-links a { padding: 0 7px; font-size: 0.82rem; }
+    .nav-logo { padding-inline: 4px; }
+    .nav-actions { gap: 4px; }
+}
+
+/* Landscape phones: very little height, so give the image all of it. */
+@media (max-height: 500px) and (orientation: landscape) {
+    .lightbox { padding-block: 12px; }
+    .lb-fig img { max-height: calc(100dvh - 24px); }
+    .lb-fig figcaption { display: none; }
+    .lb-prev, .lb-next { top: 50%; bottom: auto; translate: 0 -50%; }
+    .lb-prev { left: 12px; }
+    .lb-next { right: 12px; }
+    .hero { min-height: 0; }
+}
+
+/* Touch screens have no real hover: undo hover styles so they don't stay "stuck" after a tap. */
+@media (hover: none) {
+    .btn:hover { transform: none; }
+    .btn-solid:hover { background: var(--ink); color: var(--bg); box-shadow: none; }
+    .btn-ghost:hover { background: transparent; }
+    .icon-btn:hover { background: transparent; transform: none; }
+    .chip:hover:not([aria-pressed="true"]) { background: transparent; }
+    .tile button:hover { transform: none; box-shadow: none; }
+    .tile button:hover img { transform: none; }
+    .socials a:hover { background: transparent; transform: none; }
+    .mail:hover { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -538,5 +683,24 @@ main > section, .contact { max-width: var(--max); margin-inline: auto; padding-i
         transition-duration: 0.01ms !important;
     }
     .reveal { opacity: 1; transform: none; }
+    .wi { transform: none; }
+    .card { opacity: 1; }
     .marquee-track { animation: none; }
+    .layer { translate: none; }
 }
+
+/* ---------- View transitions (progressive enhancement) ---------- */
+::view-transition-group(*) {
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+::view-transition-group(root) { animation-duration: 0.3s; }
+
+/* Theme switch: the new theme is revealed as a circle (animated from JS), no cross-fade. */
+html.theme-vt::view-transition-old(root),
+html.theme-vt::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+html.theme-vt::view-transition-old(root) { z-index: 1; }
+html.theme-vt::view-transition-new(root) { z-index: 2; }

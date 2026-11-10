@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Design } from "../data";
 import { useModal } from "../hooks/useModal";
 
@@ -13,8 +13,14 @@ export default function Lightbox({ items, index, onIndex, onClose }: Props) {
   const ref = useModal<HTMLDivElement>(onClose, { lockScroll: true });
   const d = items[index];
   const n = items.length;
-  const go = (delta: number) => onIndex((index + delta + n) % n);
+  // Slide direction for prev/next (0 = first open, which is handled by the view transition instead).
+  const [dir, setDir] = useState<0 | 1 | -1>(0);
   const touchX = useRef<number | null>(null);
+
+  const go = (delta: 1 | -1) => {
+    setDir(delta);
+    onIndex((index + delta + n) % n);
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -54,7 +60,7 @@ export default function Lightbox({ items, index, onIndex, onClose }: Props) {
           </button>
         </>
       )}
-      <figure className="lb-fig" key={d.src}>
+      <figure className="lb-fig" data-dir={dir} key={d.src}>
         <img src={d.src} alt={`${d.title} design`} />
         <figcaption>
           <b>{d.title}</b>

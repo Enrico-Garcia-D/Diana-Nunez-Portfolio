@@ -1,31 +1,34 @@
 import { profile } from "../data";
-import { useReveal } from "../hooks/useReveal";
+import Reveal from "./Reveal";
+import Words from "./Words";
 
 export default function About() {
-  const ref = useReveal<HTMLDivElement>();
   return (
     <section className="section" id="about" aria-labelledby="about-title">
-      <div className="about reveal" ref={ref}>
+      <Reveal className="about">
         <div>
-          <p className="eyebrow">About</p>
-          <h2 id="about-title" className="h2">
-            Detail-obsessed, <em>color-curious.</em>
-          </h2>
+          <Words as="h2" id="about-title" className="h2" text="Detail-obsessed, color-curious." em={["color-curious."]} />
         </div>
         <div className="about-body">
-          {profile.about.map((p) => (
-            <p key={p}>{p}</p>
+          {profile.about.map((p, i) => (
+            <Reveal as="p" key={p} delay={150 + i * 120}>
+              {p}
+            </Reveal>
           ))}
           <ul className="tags" aria-label="Services">
-            {profile.services.map((s) => (
-              <li key={s}>{s}</li>
+            {profile.services.map((s, i) => (
+              <Reveal as="li" key={s} delay={450 + i * 70}>
+                {s}
+              </Reveal>
             ))}
           </ul>
-          <a className="btn btn-ghost" href={profile.cv} download="Diana_Nunez_CV.pdf">
-            Download CV <span aria-hidden="true">↓</span>
-          </a>
+          <Reveal delay={750}>
+            <a className="btn btn-ghost" href={profile.cv} download="Diana_Nunez_CV.pdf">
+              Download CV <span className="arrow" aria-hidden="true">↓</span>
+            </a>
+          </Reveal>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
